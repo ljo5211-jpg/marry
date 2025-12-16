@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>임진오 & 신하솜의 결혼식에 초대합니다</title>
+    <meta name="description" content="2026년 11월 21일, 저희 두 사람의 새로운 시작을 축복해 주세요.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section id="hero" class="fade-in">
+            <div class="hero-content">
+                <p class="date-eng">NOVEMBER 21, 2026</p>
+                <h1 class="names">
+                    <span class="groom">JinOh</span>
+                    <span class="amp">&</span>
+                    <span class="bride">HaSom</span>
+                </h1>
+                <p class="korean-names">임진오 <span class="divider">|</span> 신하솜</p>
+                <div class="location-info">
+                    <p>2026년 11월 21일 토요일 오후 4시 40분</p>
+                    <p>인천 그랜드하우스</p>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll</span>
+            </div>
+        </section>
+
+        <!-- Intro Section -->
+        <section id="intro" class="fade-in">
+            <div class="paper-texture"></div>
+            <h2 class="section-title">초대합니다</h2>
+            <div class="intro-text">
+                <p>평생을 같이하고 싶은 사람을 만났습니다.</p>
+                <p>서로 아껴주고 이해하며<br>사랑 베풀며 살고 싶습니다.</p>
+                <p>저희 약속 위에 따뜻한 격려로<br>축복해 주셔서 힘찬 출발의<br>디딤돌이 되어 주십시오.</p>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="fade-in">
+            <h2 class="section-title">Gallery</h2>
+            <div class="gallery-grid">
+                <!-- Placeholders for images -->
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+                <div class="gallery-item"></div>
+            </div>
+        </section>
+
+        <!-- Location Section -->
+        <section id="location" class="fade-in">
+            <h2 class="section-title">오시는 길</h2>
+            <div class="map-placeholder" style="background: none; height: auto;">
+                <img src="assets/map.png" alt="지도"
+                    style="width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            </div>
+            <div class="address-box">
+                <p class="venue-name">그랜드하우스</p>
+                <p class="address-text">인천광역시 미추홀구 주안동</p>
+                <button class="btn-copy" onclick="copyToClipboard('인천광역시 미추홀구 주안동 그랜드하우스')">주소 복사하기</button>
+            </div>
+        </section>
+
+        <!-- Account Section -->
+        <section id="account" class="fade-in">
+            <h2 class="section-title">마음 전하실 곳</h2>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">신랑측 계좌번호</div>
+                    <div class="accordion-content">
+                        <div class="account-row">
+                            <span>국민 123-456-7890</span>
+                            <button class="btn-copy-small" onclick="copyToClipboard('123-456-7890')">복사</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header">신부측 계좌번호</div>
+                    <div class="accordion-content">
+                        <div class="account-row">
+                            <span>신한 110-222-333333</span>
+                            <button class="btn-copy-small" onclick="copyToClipboard('110-222-333333')">복사</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP Section -->
+        <section id="rsvp" class="fade-in">
+            <h2 class="section-title">RSVP</h2>
+            <p class="rsvp-desc">참석해주셔서 자리를 빛내주시면 감사하겠습니다.</p>
+            <form id="rsvp-form" onsubmit="handleRSVP(event)">
+                <div class="form-group">
+                    <input type="text" placeholder="성함" required>
+                </div>
+                <div class="form-group">
+                    <select required>
+                        <option value="" disabled selected>구분</option>
+                        <option value="groom">신랑측 하객</option>
+                        <option value="bride">신부측 하객</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select required>
+                        <option value="" disabled selected>참석 인원</option>
+                        <option value="1">1명</option>
+                        <option value="2">2명</option>
+                        <option value="3">3명 이상</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">참석 의사 전달하기</button>
+            </form>
+        </section>
+
+        <footer>
+            <p class="copyright">Copyright © 2025 JinOh & HaSom</p>
+        </footer>
+    </main>
+
+    <div id="toast" class="toast">복사되었습니다.</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
