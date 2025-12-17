@@ -229,3 +229,49 @@ window.deleteRSVP = async () => {
         }
     }
 };
+// Gallery Logic
+const galleryImages = [
+    "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=90",
+    "https://images.unsplash.com/photo-1511285560982-1351cdeb9821?auto=format&fit=crop&w=1200&q=90",
+    "https://images.unsplash.com/photo-1522673607200-1645062cd95c?auto=format&fit=crop&w=1200&q=90",
+    "https://images.unsplash.com/photo-1520854221256-17451cc330e7?auto=format&fit=crop&w=1200&q=90",
+    "https://images.unsplash.com/photo-1525772764200-be829a350797?auto=format&fit=crop&w=1200&q=90",
+    "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1200&q=90"
+];
+
+let currentImageIndex = 0;
+
+window.openGallery = (index) => {
+    currentImageIndex = index;
+    const modal = document.getElementById('gallery-modal');
+    const modalImg = document.getElementById('gallery-img');
+
+    modal.style.display = "flex";
+    modalImg.src = galleryImages[currentImageIndex];
+    document.body.style.overflow = 'hidden'; // Prevent scrolling
+};
+
+window.closeGallery = () => {
+    document.getElementById('gallery-modal').style.display = "none";
+    document.body.style.overflow = 'auto'; // Restore scrolling
+};
+
+window.changeImage = (n) => {
+    currentImageIndex += n;
+    if (currentImageIndex >= galleryImages.length) {
+        currentImageIndex = 0;
+    } else if (currentImageIndex < 0) {
+        currentImageIndex = galleryImages.length - 1;
+    }
+    document.getElementById('gallery-img').src = galleryImages[currentImageIndex];
+};
+
+// Keyboard support for gallery
+document.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('gallery-modal');
+    if (modal && modal.style.display === 'flex') {
+        if (e.key === 'ArrowLeft') changeImage(-1);
+        if (e.key === 'ArrowRight') changeImage(1);
+        if (e.key === 'Escape') closeGallery();
+    }
+});
