@@ -63,9 +63,37 @@ function showToast() {
     }, 2000);
 }
 
-// 4. RSVP Form Handler (Demo)
-function handleRSVP(event) {
+// 4. RSVP Form Handler (Firebase)
+import { db } from './firebase-config.js';
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+window.handleRSVP = async function (event) {
     event.preventDefault();
-    alert('참석 의사가 전달되었습니다. (데모)');
-    event.target.reset();
+
+    const submitBtn = event.target.querySelector('button');
+    const originalBtnText = submitBtn.innerText;
+    submitBtn.innerText = '전송 중...';
+    submitBtn.disabled = true;
+
+    try {
+        const name = event.target.querySelector('input[type="text"]').value;
+        const side = event.target.querySelectorAll('select')[0].value;
+        const count = event.target.querySelectorAll('select')[1].value;
+
+        await addDoc(collection(db, "rsvps"), {
+            name: name,
+            side: side,
+            count: parseInt(count),
+            timestamp: serverTimestamp()
+        });
+
+        alert('참석 의사가 성공적으로 전달되었습니다!');
+        event.target.reset();
+    } catch (e) {
+        console.error("Error adding document: ", e);
+        alert('전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.\n(Firebase 설정이 올바른지 확인 필요)');
+    } finally {
+        submitBtn.innerText = originalBtnText;
+        submitBtn.disabled = false;
+    }
 }
