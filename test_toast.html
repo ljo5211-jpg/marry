@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Toast Z-Index Test</title>
+    <link rel="stylesheet" href="styles.css?v=3">
+    <style>
+        body {
+            padding: 50px;
+        }
+
+        .test-box {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Toast Visibility Test</h1>
+
+    <div class="test-box">
+        <button onclick="showToast('기본 토스트 테스트')">1. 기본 토스트 띄우기</button>
+    </div>
+
+    <div class="test-box">
+        <button onclick="openModalAndToast()">2. 모달 위 토스트 테스트</button>
+    </div>
+
+    <!-- Mock Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h3>모달이 열렸습니다</h3>
+            <p>잠시 후 토스트가 떠야 합니다.</p>
+            <button onclick="closeEditModal()">닫기</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">토스트 메시지</div>
+
+    <script>
+        function showToast(message = '테스트 메시지') {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function openModalAndToast() {
+            document.getElementById('edit-modal').classList.add('show');
+            setTimeout(() => {
+                showToast('모달 위 토스트 확인!');
+            }, 1000);
+
+            setTimeout(() => {
+                document.getElementById('edit-modal').classList.remove('show');
+            }, 3000);
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('show');
+        }
+    </script>
+</body>
+
+</html>

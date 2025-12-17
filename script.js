@@ -177,7 +177,7 @@ window.updateRSVP = async () => {
                 count: parseInt(count)
             });
             showToast('수정되었습니다.');
-            closeEditModal();
+            setTimeout(() => closeEditModal(), 500);
         } catch (e) {
             console.error(e);
             alert('오류가 발생했습니다.');
@@ -191,7 +191,7 @@ window.deleteRSVP = async () => {
         try {
             await deleteDoc(doc(db, "rsvps", id));
             showToast('취소되었습니다.');
-            closeEditModal();
+            setTimeout(() => closeEditModal(), 500);
         } catch (e) {
             console.error(e);
             alert('오류가 발생했습니다.');
