@@ -24,6 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
             content.classList.toggle('active');
         });
     });
+
+    // Safety Net: Bind Modify Button
+    const btnModify = document.getElementById('btn-modify');
+    if (btnModify) {
+        btnModify.addEventListener('click', () => {
+            console.log('Modify button clicked via Listener');
+            if (window.openSearchModal) window.openSearchModal();
+        });
+    }
 });
 
 // 3. Copy to Clipboard
