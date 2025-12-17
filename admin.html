@@ -205,6 +205,9 @@
 
         const loginInput = document.getElementById('admin-password');
         if (loginInput) {
+            // Auto focus on load
+            window.onload = () => loginInput.focus();
+
             loginInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') checkLogin();
             });
@@ -302,6 +305,7 @@
             inputEl.value = data.count;
             modal.style.display = 'flex';
             inputEl.focus();
+            inputEl.select(); // Select all text for easy replacement
 
             const saveData = async () => {
                 const val = parseInt(inputEl.value);
