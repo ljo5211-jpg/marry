@@ -231,12 +231,15 @@ window.deleteRSVP = async () => {
 };
 // Gallery Logic
 const galleryImages = [
-    "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=90",
-    "https://images.unsplash.com/photo-1511285560982-1351cdeb9821?auto=format&fit=crop&w=1200&q=90",
-    "https://images.unsplash.com/photo-1522673607200-1645062cd95c?auto=format&fit=crop&w=1200&q=90",
-    "https://images.unsplash.com/photo-1520854221256-17451cc330e7?auto=format&fit=crop&w=1200&q=90",
-    "https://images.unsplash.com/photo-1525772764200-be829a350797?auto=format&fit=crop&w=1200&q=90",
-    "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1200&q=90"
+    "assets/gallery/1.jpg",
+    "assets/gallery/2.jpg",
+    "assets/gallery/3.jpg",
+    "assets/gallery/4.jpg",
+    "assets/gallery/5.jpg",
+    "assets/gallery/6.jpg",
+    "assets/gallery/7.jpg",
+    "assets/gallery/8.jpg",
+    "assets/gallery/9.jpg"
 ];
 
 let currentImageIndex = 0;
@@ -246,14 +249,15 @@ window.openGallery = (index) => {
     const modal = document.getElementById('gallery-modal');
     const modalImg = document.getElementById('gallery-img');
 
+    // Reset Zoom/State if needed
     modal.style.display = "flex";
     modalImg.src = galleryImages[currentImageIndex];
-    document.body.style.overflow = 'hidden'; // Prevent scrolling
+    document.body.style.overflow = 'hidden';
 };
 
 window.closeGallery = () => {
     document.getElementById('gallery-modal').style.display = "none";
-    document.body.style.overflow = 'auto'; // Restore scrolling
+    document.body.style.overflow = 'auto';
 };
 
 window.changeImage = (n) => {
@@ -266,7 +270,7 @@ window.changeImage = (n) => {
     document.getElementById('gallery-img').src = galleryImages[currentImageIndex];
 };
 
-// Keyboard support for gallery
+// Keyboard support
 document.addEventListener('keydown', (e) => {
     const modal = document.getElementById('gallery-modal');
     if (modal && modal.style.display === 'flex') {
@@ -275,3 +279,29 @@ document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeGallery();
     }
 });
+
+// Mobile Swipe Support
+let touchStartX = 0;
+let touchEndX = 0;
+
+const galleryModal = document.getElementById('gallery-modal');
+if (galleryModal) {
+    galleryModal.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    galleryModal.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+}
+
+function handleSwipe() {
+    const threshold = 50; // Minimum distance to be considered a swipe
+    if (touchEndX < touchStartX - threshold) {
+        changeImage(1); // Swipe Left -> Next
+    }
+    if (touchEndX > touchStartX + threshold) {
+        changeImage(-1); // Swipe Right -> Prev
+    }
+}
