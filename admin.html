@@ -208,8 +208,11 @@
                     `;
 
                     // Attach event listeners for Admin actions
-                    tr.querySelector('.btn-edit').onclick = () => adminEdit(docSnap.id, data);
-                    tr.querySelector('.btn-del').onclick = () => adminDelete(docSnap.id);
+                    const editBtn = tr.querySelector('.btn-edit');
+                    const delBtn = tr.querySelector('.btn-del');
+
+                    editBtn.addEventListener('click', () => window.adminEdit(docSnap.id, data));
+                    delBtn.addEventListener('click', () => window.adminDelete(docSnap.id));
 
                     tbody.appendChild(tr);
                 });
