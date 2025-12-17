@@ -157,13 +157,42 @@
         </tbody>
     </table>
 
-    <!-- Custom Modals Removed -->
+    <!-- Confirm Modal -->
+    <div id="confirm-modal"
+        style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:3000; justify-content:center; align-items:center;">
+        <div style="background:white; padding:2rem; border-radius:8px; text-align:center; min-width:300px;">
+            <p id="confirm-message" style="margin-bottom:1.5rem;">확인하시겠습니까?</p>
+            <div>
+                <button id="btn-confirm-yes"
+                    style="background:#333; color:white; border:none; padding:8px 16px; margin-right:10px; border-radius:4px;">확인</button>
+                <button id="btn-confirm-no"
+                    style="background:#ddd; color:#333; border:none; padding:8px 16px; border-radius:4px;">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Count Modal -->
+    <div id="edit-count-modal"
+        style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:3000; justify-content:center; align-items:center;">
+        <div style="background:white; padding:2rem; border-radius:8px; text-align:center; min-width:300px;">
+            <h3 style="margin-top:0; margin-bottom:1rem;">참석 인원 수정</h3>
+            <p style="margin-bottom:1rem;"><span id="edit-target-name" style="font-weight:bold;"></span>님</p>
+            <input type="number" id="new-count-input" min="0"
+                style="padding:8px; width:80px; text-align:center; margin-bottom:1.5rem; border:1px solid #ddd; border-radius:4px; font-size:1rem;">
+            <div>
+                <button id="btn-edit-confirm"
+                    style="background:#1565c0; color:white; border:none; padding:8px 16px; margin-right:10px; border-radius:4px;">저장</button>
+                <button id="btn-edit-cancel"
+                    style="background:#ddd; color:#333; border:none; padding:8px 16px; border-radius:4px;">취소</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { db } from './firebase-config.js';
         import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Simple password check
+        // 1. Login Handling
         window.checkLogin = () => {
             const pw = document.getElementById('admin-password').value;
             if (pw === '1225') {
@@ -174,11 +203,14 @@
             }
         };
 
-        // Support Enter key for login
-        document.getElementById('admin-password').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') checkLogin();
-        });
+        const loginInput = document.getElementById('admin-password');
+        if (loginInput) {
+            loginInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkLogin();
+            });
+        }
 
+        // 2. Load Data
         function loadData() {
             const q = query(collection(db, "rsvps"), orderBy("timestamp", "desc"));
 
@@ -200,7 +232,6 @@
                     const date = data.timestamp ? data.timestamp.toDate().toLocaleString() : '';
                     const phone = data.phone || '-';
 
-                    // Create row
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${data.name}</td>
@@ -214,17 +245,9 @@
                         </td>
                     `;
 
-                    // Attach event listeners for Admin actions
-                    const editBtn = tr.querySelector('.btn-edit');
-                    const delBtn = tr.querySelector('.btn-del');
-
-                    editBtn.addEventListener('click', (e) => {
-                        window.adminEdit(docSnap.id, data);
-                    });
-
-                    delBtn.addEventListener('click', (e) => {
-                        window.adminDelete(docSnap.id);
-                    });
+                    // Bind actions directly
+                    tr.querySelector('.btn-edit').onclick = () => window.adminEdit(docSnap.id, data);
+                    tr.querySelector('.btn-del').onclick = () => window.adminDelete(docSnap.id);
 
                     tbody.appendChild(tr);
                 });
@@ -235,24 +258,83 @@
             });
         }
 
+        // 3. Custom Confirm Logic
+        window.showConfirm = (message) => {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirm-modal');
+                const msgEl = document.getElementById('confirm-message');
+                const btnYes = document.getElementById('btn-confirm-yes');
+                const btnNo = document.getElementById('btn-confirm-no');
+
+                msgEl.innerText = message;
+                modal.style.display = 'flex';
+
+                // Simple robust handler replacement
+                btnYes.onclick = () => {
+                    modal.style.display = 'none';
+                    resolve(true);
+                };
+
+                btnNo.onclick = () => {
+                    modal.style.display = 'none';
+                    resolve(false);
+                };
+            });
+        };
+
         window.adminDelete = async (id) => {
-            if (confirm('이 항목을 정말 삭제하시겠습니까? (복구 불가)')) {
+            const confirmed = await showConfirm('이 항목을 정말 삭제하시겠습니까? (복구 불가)');
+            if (confirmed) {
                 await deleteDoc(doc(db, "rsvps", id));
             }
         };
 
-        window.adminEdit = async (id, data) => {
-            const newCount = prompt(`'${data.name}'님의 참석 인원을 수정합니다.\n숫자를 입력하세요 (0~10):`, data.count);
-            if (newCount !== null) {
-                const parsed = parseInt(newCount);
-                if (!isNaN(parsed) && parsed >= 0) {
-                    await updateDoc(doc(db, "rsvps", id), {
-                        count: parsed
-                    });
+        // 4. Custom Edit Logic
+        window.adminEdit = (id, data) => {
+            const modal = document.getElementById('edit-count-modal');
+            const nameEl = document.getElementById('edit-target-name');
+            const inputEl = document.getElementById('new-count-input');
+            const btnConfirm = document.getElementById('btn-edit-confirm');
+            const btnCancel = document.getElementById('btn-edit-cancel');
+
+            // Setup UI
+            nameEl.innerText = data.name;
+            inputEl.value = data.count;
+            modal.style.display = 'flex';
+            inputEl.focus();
+
+            const saveData = async () => {
+                const val = parseInt(inputEl.value);
+                if (!isNaN(val) && val >= 0) {
+                    try {
+                        await updateDoc(doc(db, "rsvps", id), { count: val });
+                        modal.style.display = 'none';
+                    } catch (e) {
+                        console.error(e);
+                        alert('수정 중 오류 발생');
+                    }
                 } else {
-                    alert("올바른 숫자를 입력해주세요.");
+                    alert('올바른 숫자를 입력하세요.');
                 }
-            }
+            };
+
+            const closeData = () => {
+                modal.style.display = 'none';
+            };
+
+            // Bind Events (Overwriting ensures no duplicates)
+            btnConfirm.onclick = saveData;
+            btnCancel.onclick = closeData;
+
+            inputEl.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    // Prevent generic form submission if inside a form, though here it's fine.
+                    saveData();
+                }
+                if (e.key === 'Escape') {
+                    closeData();
+                }
+            };
         };
     </script>
 </body>
