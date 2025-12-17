@@ -64,8 +64,9 @@ function fallbackCopy(text) {
     document.body.removeChild(textArea);
 }
 
-function showToast() {
+function showToast(message = '복사되었습니다.') {
     const toast = document.getElementById('toast');
+    toast.innerText = message;
     toast.classList.add('show');
     setTimeout(() => {
         toast.classList.remove('show');
@@ -175,7 +176,7 @@ window.updateRSVP = async () => {
                 side: side,
                 count: parseInt(count)
             });
-            alert('수정되었습니다.');
+            showToast('수정되었습니다.');
             closeEditModal();
         } catch (e) {
             console.error(e);
@@ -189,7 +190,7 @@ window.deleteRSVP = async () => {
     if (confirm('정말 참석을 취소하시겠습니까?')) {
         try {
             await deleteDoc(doc(db, "rsvps", id));
-            alert('취소되었습니다.');
+            showToast('취소되었습니다.');
             closeEditModal();
         } catch (e) {
             console.error(e);
