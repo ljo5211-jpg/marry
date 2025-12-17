@@ -350,13 +350,21 @@ footer {
 /* Modify & Modal Styles */
 .btn-modify-link {
     background: none;
-    border: none;
-    text-decoration: underline;
-    color: #999;
-    font-size: 0.85rem;
-    margin-top: 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: #888;
+    font-size: 0.8rem;
     cursor: pointer;
     font-family: var(--font-kr);
+    margin-top: 20px;
+    transition: all 0.2s;
+}
+
+.btn-modify-link:hover {
+    border-color: #aaa;
+    color: #666;
+    background-color: #f9f9f9;
 }
 
 .modal {
@@ -370,6 +378,8 @@ footer {
     background-color: rgba(0, 0, 0, 0.5);
     align-items: center;
     justify-content: center;
+    backdrop-filter: blur(3px);
+    /* Blur effect */
 }
 
 .modal.show {
@@ -423,4 +433,19 @@ footer {
 
 .btn-row button {
     flex: 1;
+}
+
+.btn-cancel {
+    background-color: #e0e0e0;
+    color: #555;
+    border: none;
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-cancel:hover {
+    background-color: #d0d0d0;
 }
