@@ -211,8 +211,17 @@
                     const editBtn = tr.querySelector('.btn-edit');
                     const delBtn = tr.querySelector('.btn-del');
 
-                    editBtn.addEventListener('click', () => window.adminEdit(docSnap.id, data));
-                    delBtn.addEventListener('click', () => window.adminDelete(docSnap.id));
+                    editBtn.addEventListener('click', (e) => {
+                        if (window.adminEdit) {
+                            window.adminEdit(docSnap.id, data).catch(err => console.error('Error in administrative edit:', err));
+                        }
+                    });
+
+                    delBtn.addEventListener('click', (e) => {
+                        if (window.adminDelete) {
+                            window.adminDelete(docSnap.id).catch(err => console.error('Error in administrative delete:', err));
+                        }
+                    });
 
                     tbody.appendChild(tr);
                 });
