@@ -171,6 +171,23 @@
         </div>
     </div>
 
+    <!-- Edit Count Modal -->
+    <div id="edit-count-modal"
+        style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:3000; justify-content:center; align-items:center;">
+        <div style="background:white; padding:2rem; border-radius:8px; text-align:center; min-width:300px;">
+            <h3 style="margin-top:0; margin-bottom:1rem;">참석 인원 수정</h3>
+            <p style="margin-bottom:1rem;"><span id="edit-target-name" style="font-weight:bold;"></span>님</p>
+            <input type="number" id="new-count-input" min="1"
+                style="padding:8px; width:80px; text-align:center; margin-bottom:1.5rem; border:1px solid #ddd; border-radius:4px; font-size:1rem;">
+            <div>
+                <button id="btn-edit-confirm"
+                    style="background:#1565c0; color:white; border:none; padding:8px 16px; margin-right:10px; border-radius:4px;">저장</button>
+                <button id="btn-edit-cancel"
+                    style="background:#ddd; color:#333; border:none; padding:8px 16px; border-radius:4px;">취소</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { db } from './firebase-config.js';
         import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -185,6 +202,11 @@
                 alert('비밀번호가 틀렸습니다.');
             }
         };
+
+        // Support Enter key for login
+        document.getElementById('admin-password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkLogin();
+        });
 
         function loadData() {
             const q = query(collection(db, "rsvps"), orderBy("timestamp", "desc"));
@@ -226,9 +248,7 @@
                     const delBtn = tr.querySelector('.btn-del');
 
                     editBtn.addEventListener('click', (e) => {
-                        if (window.adminEdit) {
-                            window.adminEdit(docSnap.id, data).catch(err => console.error('Error in administrative edit:', err));
-                        }
+                        window.adminEdit(docSnap.id, data);
                     });
 
                     delBtn.addEventListener('click', (e) => {
@@ -282,12 +302,6 @@
             }
         };
 
-        window.adminEdit = async (id, data) => {
-            const newCount = prompt(`'${data.name}'님의 참석 인원을 수정합니다.\n숫자를 입력하세요:`, data.count);
-            if (newCount !== null) {
-                await updateDoc(doc(db, "rsvps", id), {
-                    count: parseInt(newCount)
-                });
             }
         };
     </script>
