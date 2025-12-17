@@ -114,6 +114,9 @@
                     <input type="text" placeholder="성함" required>
                 </div>
                 <div class="form-group">
+                    <input type="tel" placeholder="연락처 (네자리 혹은 폰번호 전체)" required>
+                </div>
+                <div class="form-group">
                     <select required>
                         <option value="" disabled selected>구분</option>
                         <option value="groom">신랑측 하객</option>
@@ -130,11 +133,56 @@
                 </div>
                 <button type="submit" class="btn-submit">참석 의사 전달하기</button>
             </form>
+            <button class="btn-modify-link" onclick="openSearchModal()">내 참석 정보 수정하기</button>
         </section>
 
-        <footer>
-            <p class="copyright">Copyright © 2025 JinOh & HaSom</p>
-        </footer>
+        <!-- Search Modal -->
+        <div id="search-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeSearchModal()">&times;</span>
+                <h3>참석 정보 검색</h3>
+                <p>입력하셨던 연락처를 입력해 주세요.</p>
+                <div class="form-group">
+                    <input type="text" id="search-phone" placeholder="연락처">
+                </div>
+                <button class="btn-submit" onclick="searchRSVP()">검색</button>
+                <div id="search-results" class="search-results"></div>
+            </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div id="edit-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeEditModal()">&times;</span>
+                <h3>참석 정보 수정</h3>
+                <input type="hidden" id="edit-doc-id">
+                <div class="form-group">
+                    <label>성함: <span id="edit-display-name" style="font-weight:bold;"></span></label>
+                </div>
+                <div class="form-group">
+                    <select id="edit-side">
+                        <option value="groom">신랑측 하객</option>
+                        <option value="bride">신부측 하객</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select id="edit-count">
+                        <option value="1">1명</option>
+                        <option value="2">2명</option>
+                        <option value="3">3명 이상</option>
+                    </select>
+                </div>
+                <div class="btn-row">
+                    <button class="btn-submit" onclick="updateRSVP()">수정하기</button>
+                    <button class="btn-cancel" onclick="deleteRSVP()" style="margin-top:0; background-color: #999;">참석
+                        취소</button>
+                </div>
+            </div>
+            </section>
+
+            <footer>
+                <p class="copyright">Copyright © 2025 JinOh & HaSom</p>
+            </footer>
     </main>
 
     <div id="toast" class="toast">복사되었습니다.</div>
