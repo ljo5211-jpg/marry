@@ -302,7 +302,56 @@
             }
         };
 
-            }
+        window.adminEdit = (id, data) => {
+            const modal = document.getElementById('edit-count-modal');
+            const nameEl = document.getElementById('edit-target-name');
+            const inputEl = document.getElementById('new-count-input');
+            const btnConfirm = document.getElementById('btn-edit-confirm');
+            const btnCancel = document.getElementById('btn-edit-cancel');
+
+            // Set Data
+            nameEl.innerText = data.name;
+            inputEl.value = data.count;
+            modal.style.display = 'flex';
+            inputEl.focus();
+
+            const closeModal = () => {
+                modal.style.display = 'none';
+                inputEl.onkeydown = null; // Clean up listener
+                btnConfirm.onclick = null;
+                btnCancel.onclick = null;
+            };
+
+            // Bind Confirm Check
+            btnConfirm.onclick = async () => {
+                const val = inputEl.value;
+                if (val && parseInt(val) >= 0) {
+                    try {
+                        await updateDoc(doc(db, "rsvps", id), {
+                            count: parseInt(val)
+                        });
+                        closeModal();
+                    } catch (e) {
+                        console.error(e);
+                        alert('수정 중 오류가 발생했습니다.');
+                    }
+                } else {
+                    alert('올바른 숫자를 입력하세요.');
+                }
+            };
+
+            // Bind Cancel
+            btnCancel.onclick = () => {
+                closeModal();
+            };
+
+            // Bind Enter Key
+            inputEl.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent default form actions if any
+                    btnConfirm.click();
+                }
+            };
         };
     </script>
 </body>
