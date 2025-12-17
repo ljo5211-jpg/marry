@@ -165,12 +165,42 @@ window.openEditModal = (id, data) => {
 
 window.closeEditModal = () => document.getElementById('edit-modal').classList.remove('show');
 
+// Custom Confirm Logic
+window.showConfirm = (message) => {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        const msgEl = document.getElementById('confirm-message');
+        const btnYes = document.getElementById('btn-confirm-yes');
+        const btnNo = document.getElementById('btn-confirm-no');
+
+        msgEl.innerText = message;
+        modal.classList.add('show');
+
+        const cleanup = () => {
+            modal.classList.remove('show');
+            btnYes.replaceWith(btnYes.cloneNode(true)); // Remove listeners
+            btnNo.replaceWith(btnNo.cloneNode(true));
+        };
+
+        document.getElementById('btn-confirm-yes').onclick = () => {
+            cleanup();
+            resolve(true);
+        };
+
+        document.getElementById('btn-confirm-no').onclick = () => {
+            cleanup();
+            resolve(false);
+        };
+    });
+};
+
 window.updateRSVP = async () => {
     const id = document.getElementById('edit-doc-id').value;
     const side = document.getElementById('edit-side').value;
     const count = document.getElementById('edit-count').value;
 
-    if (confirm('수정하시겠습니까?')) {
+    const confirmed = await showConfirm('수정하시겠습니까?');
+    if (confirmed) {
         try {
             await updateDoc(doc(db, "rsvps", id), {
                 side: side,
@@ -187,7 +217,8 @@ window.updateRSVP = async () => {
 
 window.deleteRSVP = async () => {
     const id = document.getElementById('edit-doc-id').value;
-    if (confirm('정말 참석을 취소하시겠습니까?')) {
+    const confirmed = await showConfirm('정말 참석을 취소하시겠습니까?');
+    if (confirmed) {
         try {
             await deleteDoc(doc(db, "rsvps", id));
             showToast('취소되었습니다.');
