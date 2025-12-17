@@ -157,36 +157,7 @@
         </tbody>
     </table>
 
-    <!-- Confirm Modal -->
-    <div id="confirm-modal"
-        style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:3000; justify-content:center; align-items:center;">
-        <div style="background:white; padding:2rem; border-radius:8px; text-align:center; min-width:300px;">
-            <p id="confirm-message" style="margin-bottom:1.5rem;">확인하시겠습니까?</p>
-            <div>
-                <button id="btn-confirm-yes"
-                    style="background:#333; color:white; border:none; padding:8px 16px; margin-right:10px; border-radius:4px;">확인</button>
-                <button id="btn-confirm-no"
-                    style="background:#ddd; color:#333; border:none; padding:8px 16px; border-radius:4px;">취소</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Count Modal -->
-    <div id="edit-count-modal"
-        style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:3000; justify-content:center; align-items:center;">
-        <div style="background:white; padding:2rem; border-radius:8px; text-align:center; min-width:300px;">
-            <h3 style="margin-top:0; margin-bottom:1rem;">참석 인원 수정</h3>
-            <p style="margin-bottom:1rem;"><span id="edit-target-name" style="font-weight:bold;"></span>님</p>
-            <input type="number" id="new-count-input" min="0"
-                style="padding:8px; width:80px; text-align:center; margin-bottom:1.5rem; border:1px solid #ddd; border-radius:4px; font-size:1rem;">
-            <div>
-                <button id="btn-edit-confirm"
-                    style="background:#1565c0; color:white; border:none; padding:8px 16px; margin-right:10px; border-radius:4px;">저장</button>
-                <button id="btn-edit-cancel"
-                    style="background:#ddd; color:#333; border:none; padding:8px 16px; border-radius:4px;">취소</button>
-            </div>
-        </div>
-    </div>
+    <!-- Custom Modals Removed -->
 
     <script type="module">
         import { db } from './firebase-config.js';
@@ -252,9 +223,7 @@
                     });
 
                     delBtn.addEventListener('click', (e) => {
-                        if (window.adminDelete) {
-                            window.adminDelete(docSnap.id).catch(err => console.error('Error in administrative delete:', err));
-                        }
+                        window.adminDelete(docSnap.id);
                     });
 
                     tbody.appendChild(tr);
@@ -266,92 +235,24 @@
             });
         }
 
-        // Custom Confirm for Admin
-        window.showConfirm = (message) => {
-            return new Promise((resolve) => {
-                const modal = document.getElementById('confirm-modal');
-                const msgEl = document.getElementById('confirm-message');
-                const btnYes = document.getElementById('btn-confirm-yes');
-                const btnNo = document.getElementById('btn-confirm-no');
-
-                msgEl.innerText = message;
-                modal.style.display = 'flex';
-
-                const cleanup = () => {
-                    modal.style.display = 'none';
-                    btnYes.replaceWith(btnYes.cloneNode(true));
-                    btnNo.replaceWith(btnNo.cloneNode(true));
-                };
-
-                document.getElementById('btn-confirm-yes').onclick = () => {
-                    cleanup();
-                    resolve(true);
-                };
-
-                document.getElementById('btn-confirm-no').onclick = () => {
-                    cleanup();
-                    resolve(false);
-                };
-            });
-        };
-
         window.adminDelete = async (id) => {
-            const confirmed = await showConfirm('이 항목을 정말 삭제하시겠습니까? (복구 불가)');
-            if (confirmed) {
+            if (confirm('이 항목을 정말 삭제하시겠습니까? (복구 불가)')) {
                 await deleteDoc(doc(db, "rsvps", id));
             }
         };
 
-        window.adminEdit = (id, data) => {
-            const modal = document.getElementById('edit-count-modal');
-            const nameEl = document.getElementById('edit-target-name');
-            const inputEl = document.getElementById('new-count-input');
-            const btnConfirm = document.getElementById('btn-edit-confirm');
-            const btnCancel = document.getElementById('btn-edit-cancel');
-
-            // Set Data
-            nameEl.innerText = data.name;
-            inputEl.value = data.count;
-            modal.style.display = 'flex';
-            inputEl.focus();
-
-            const closeModal = () => {
-                modal.style.display = 'none';
-                inputEl.onkeydown = null; // Clean up listener
-                btnConfirm.onclick = null;
-                btnCancel.onclick = null;
-            };
-
-            // Bind Confirm Check
-            btnConfirm.onclick = async () => {
-                const val = inputEl.value;
-                if (val && parseInt(val) >= 0) {
-                    try {
-                        await updateDoc(doc(db, "rsvps", id), {
-                            count: parseInt(val)
-                        });
-                        closeModal();
-                    } catch (e) {
-                        console.error(e);
-                        alert('수정 중 오류가 발생했습니다.');
-                    }
+        window.adminEdit = async (id, data) => {
+            const newCount = prompt(`'${data.name}'님의 참석 인원을 수정합니다.\n숫자를 입력하세요 (0~10):`, data.count);
+            if (newCount !== null) {
+                const parsed = parseInt(newCount);
+                if (!isNaN(parsed) && parsed >= 0) {
+                    await updateDoc(doc(db, "rsvps", id), {
+                        count: parsed
+                    });
                 } else {
-                    alert('올바른 숫자를 입력하세요.');
+                    alert("올바른 숫자를 입력해주세요.");
                 }
-            };
-
-            // Bind Cancel
-            btnCancel.onclick = () => {
-                closeModal();
-            };
-
-            // Bind Enter Key
-            inputEl.onkeydown = (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); // Prevent default form actions if any
-                    btnConfirm.click();
-                }
-            };
+            }
         };
     </script>
 </body>
